@@ -1,19 +1,83 @@
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tải ứng dụng</title></head>
-<body style="font-family:sans-serif;text-align:center;padding:40px">
-<p>Đang chuyển đến cửa hàng ứng dụng...</p>
-<p><a id="android">Tải cho Android</a></p>
-<p><a id="ios">Tải cho iPhone/iPad</a></p>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2d8f93">
+<title>Tải ứng dụng</title>
 <script>
-  const ANDROID = "https://play.google.com/store/apps/details?id=com.gpet.vet&hl=vi";
-  const IOS = "https://apps.apple.com/vn/app/gpet-vet/id6458981758";
+  // ===== THAY THÔNG TIN APP Ở ĐÂY =====
+  const PKG = "com.gpet.vet";                               // tên gói Android
+  const IOS = "https://apps.apple.com/vn/app/gpet-vet/id6458981758";    // link App Store
+  // =====================================
+  const ANDROID = "https://play.google.com/store/apps/details?id=" + PKG;
+  const ua = navigator.userAgent;
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Mac") && navigator.maxTouchPoints > 1);
+  if (isAndroid) {
+    location.replace("intent://details?id=" + PKG + "#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=" + encodeURIComponent(ANDROID) + ";end");
+  } else if (isIOS) {
+    location.replace(IOS);
+  }
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    background: linear-gradient(#2d8f93, #055355);
+    overflow: hidden;
+  }
+  .splash {
+    position: fixed; inset: 0;
+    background: url("splash.jpg") center / cover no-repeat;
+  }
+  .loader {
+    position: fixed; left: 50%; bottom: calc(14% + env(safe-area-inset-bottom, 0px));
+    width: 28px; height: 28px; margin-left: -14px;
+    border: 3px solid rgba(255,255,255,.25); border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fallback {
+    position: fixed; left: 0; right: 0;
+    bottom: calc(6% + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    padding: 0 24px;
+    opacity: 0; visibility: hidden; transition: opacity .4s;
+  }
+  .show-fallback .fallback { opacity: 1; visibility: visible; }
+  .show-fallback .loader { display: none; }
+  .fallback p { font-size: 15px; opacity: .85; margin-bottom: 4px; }
+  .fallback a {
+    width: 100%; max-width: 300px; padding: 14px 20px;
+    border-radius: 14px; text-align: center; text-decoration: none;
+    font-size: 16px; font-weight: 600;
+    background: #fff; color: #0b5d60;
+  }
+  .fallback a.secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.45); }
+  .fallback a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .loader { animation-duration: 3s; } }
+</style>
+</head>
+<body>
+  <div class="splash" role="img" aria-label="Màn hình chờ"></div>
+  <div class="loader" aria-hidden="true"></div>
+  <div class="fallback">
+    <p>Chọn nơi tải ứng dụng</p>
+    <a id="android" class="secondary">Tải trên Google Play</a>
+    <a id="ios" class="secondary">Tải trên App Store</a>
+  </div>
+<script>
   document.getElementById("android").href = ANDROID;
   document.getElementById("ios").href = IOS;
-  const ua = navigator.userAgent;
-  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Mac") && navigator.maxTouchPoints > 1);
-  if (/Android/i.test(ua)) location.replace(ANDROID);
-  else if (isIOS) location.replace(IOS);
+  // Nút chính theo thiết bị
+  if (isIOS) document.getElementById("ios").classList.remove("secondary");
+  else document.getElementById("android").classList.remove("secondary");
+  // Điện thoại: chỉ hiện nút nếu sau 2.5 giây chưa chuyển được. Máy tính: hiện ngay.
+  setTimeout(() => document.body.classList.add("show-fallback"), (isAndroid || isIOS) ? 2500 : 0);
 </script>
-</body></html>
+</body>
+</html>
