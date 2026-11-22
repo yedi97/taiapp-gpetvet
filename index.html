@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tải ứng dụng</title></head>
+<body style="font-family:sans-serif;text-align:center;padding:40px">
+<p>Đang chuyển đến cửa hàng ứng dụng...</p>
+<p><a id="android">Tải cho Android</a></p>
+<p><a id="ios">Tải cho iPhone/iPad</a></p>
+<script>
+  const ANDROID = "https://play.google.com/store/apps/details?id=com.gpet.vet&hl=vi";
+  const IOS = "https://apps.apple.com/vn/app/gpet-vet/id6458981758";
+  document.getElementById("android").href = ANDROID;
+  document.getElementById("ios").href = IOS;
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Mac") && navigator.maxTouchPoints > 1);
+  if (/Android/i.test(ua)) location.replace(ANDROID);
+  else if (isIOS) location.replace(IOS);
+</script>
+</body></html>
