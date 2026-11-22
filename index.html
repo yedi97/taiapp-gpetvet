@@ -5,24 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2d8f93">
 <title>Tải ứng dụng</title>
-<script>
-  // ===== THAY THÔNG TIN APP Ở ĐÂY =====
-  const PKG = "com.gpet.vet";                               // tên gói Android
-  const IOS = "https://apps.apple.com/vn/app/gpet-vet/id6458981758";    // link App Store
-  // =====================================
-  const ANDROID = "https://play.google.com/store/apps/details?id=" + PKG;
-  const ua = navigator.userAgent;
-  const isAndroid = /Android/i.test(ua);
-  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Mac") && navigator.maxTouchPoints > 1);
-  if (isAndroid) {
-    location.replace("intent://details?id=" + PKG + "#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=" + encodeURIComponent(ANDROID) + ";end");
-  } else if (isIOS) {
-    location.replace(IOS);
-  }
-</script>
+<link rel="preload" as="image" href="splash.jpg">
 <style>
   * { box-sizing: border-box; margin: 0; }
   html, body { height: 100%; }
+  html { background: #2d8f93; }
   body {
     font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #fff;
@@ -71,13 +58,41 @@
     <a id="ios" class="secondary">Tải trên App Store</a>
   </div>
 <script>
+  const PKG = "com.gpet.vet";
+  const IOS = "https://apps.apple.com/app/id6458981758";
+  // =====================================
+  const ANDROID = "https://play.google.com/store/apps/details?id=" + PKG;
+  const ua = navigator.userAgent;
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Mac") && navigator.maxTouchPoints > 1);
+
   document.getElementById("android").href = ANDROID;
   document.getElementById("ios").href = IOS;
-  // Nút chính theo thiết bị
   if (isIOS) document.getElementById("ios").classList.remove("secondary");
   else document.getElementById("android").classList.remove("secondary");
-  // Điện thoại: chỉ hiện nút nếu sau 2.5 giây chưa chuyển được. Máy tính: hiện ngay.
-  setTimeout(() => document.body.classList.add("show-fallback"), (isAndroid || isIOS) ? 2500 : 0);
+
+  function go() {
+    if (isAndroid) {
+      location.replace("intent://details?id=" + PKG + "#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=" + encodeURIComponent(ANDROID) + ";end");
+    } else if (isIOS) {
+      location.replace(IOS);
+    }
+  }
+
+  if (isAndroid || isIOS) {
+    let done = false;
+    const start = () => {
+      if (done) return; done = true;
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 400)));
+    };
+    const img = new Image();
+    img.onload = img.onerror = start;
+    img.src = "splash.jpg";
+    setTimeout(start, 1500);
+    setTimeout(() => document.body.classList.add("show-fallback"), 4000);
+  } else {
+    document.body.classList.add("show-fallback");
+  }
 </script>
 </body>
 </html>
